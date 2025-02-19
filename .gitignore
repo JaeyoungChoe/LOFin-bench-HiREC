@@ -2,5 +2,6 @@
 .env
 **/__pycache__
 pdfs/*
+!pdfs/AAPL
 vectorstores/*
 results/*
