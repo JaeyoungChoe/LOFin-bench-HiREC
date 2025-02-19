@@ -5,3 +5,4 @@ pdfs/*
 !pdfs/AAPL
 vectorstores/*
 results/*
+new_results/*
