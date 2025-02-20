@@ -485,9 +485,9 @@ def solution():
                 if data_count == 0:
                     scores[metric_key][dataset_name] = None
                 else:
-                    scores[metric_key][dataset_name] = np.mean(
+                    scores[metric_key][dataset_name] = float(np.mean(
                         eval_results[metric_key][dataset_name]
-                    )
+                    ))
 
         return {
             "scores": scores,

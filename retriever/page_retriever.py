@@ -303,12 +303,12 @@ class PageRetrieverModule:
             len_k = np.sum(eval_results[top_k]["len_k"])
             scores.append(
                 {
-                    "top_k": top_k,
-                    "accuracy": correct,
-                    "recall": recall,
-                    "hit": hit,
-                    "precision": precision,
-                    "len_k": len_k,
+                    "top_k": float(top_k),
+                    "accuracy": float(correct),
+                    "recall": float(recall),
+                    "hit": float(hit),
+                    "precision": float(precision),
+                    "len_k": float(len_k),
                 }
             )
         return scores

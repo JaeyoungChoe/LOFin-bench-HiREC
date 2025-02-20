@@ -70,10 +70,10 @@ class DocumentRetrieverModule:
             hit = np.mean(eval_results[top_k]["hit"])
             precision = np.mean(eval_results[top_k]["precision"])
             scores[top_k] = {
-                "accuracy": correct,
-                "recall": recall,
-                "hit": hit,
-                "precision": precision
+                "accuracy": float(correct),
+                "recall": float(recall),
+                "hit": float(hit),
+                "precision": float(precision)
             }
         return scores
 

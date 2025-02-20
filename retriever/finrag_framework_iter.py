@@ -242,7 +242,6 @@ class FinRAGFramework(BaseFramework):
             "generator": generator_results["scores"],
         }
         scores_path = os.path.join(self.output_dir, f"{tag}_scores.json")
-        print(scores)
         self.save_json(scores_path, scores)
 
     def save_results(self, generator_results, document_retrieval_results, page_retrieval_results, suggested_queries_results, iteration_dataset, tag):
