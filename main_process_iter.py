@@ -108,7 +108,7 @@ if __name__ == "__main__":
     parser.add_argument("--iteration", type=int, default=2, help="Iteration count")
     parser.add_argument("--max_contexts", type=int, default=10, help="Max contexts")
     parser.add_argument("--use_full_page", default=False, help="Use full page")
-    parser.add_argument("--do_generate", default=True, help="Do generate")
+    parser.add_argument("--do_generate", default=False, help="Do generate")
     parser.add_argument("--continue_iteration", default=False, help="Continue")
     args = parser.parse_args()
     
