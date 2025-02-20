@@ -17,17 +17,13 @@ root_path = Path(__file__).parent
 def set_seed(seed):
     random.seed(seed)
 
-    # NumPy 시드 설정
     np.random.seed(seed)
 
-    # PyTorch 시드 설정
     torch.manual_seed(seed)
 
-    # GPU를 사용하는 경우, 모든 GPU에 대한 시드를 설정
     torch.cuda.manual_seed(seed)
-    torch.cuda.manual_seed_all(seed)  # if you are using multi-GPU.
+    torch.cuda.manual_seed_all(seed)
 
-    # 연산의 재현성을 확보하기 위해 추가 설정
     torch.backends.cudnn.deterministic = True
     torch.backends.cudnn.benchmark = False
 
