@@ -13,9 +13,8 @@ from retriever.prompts import *
 
 from retriever.utils import (
     calculate_numeric_accuracy,
-    calculate_gpt_accuracy_text_1,
+    calculate_gpt_accuracy_text,
     run_program,
-    compare_two_numbers,
     get_original_dataset_name,
 )
 
@@ -267,11 +266,15 @@ def solution():
         finish_retrieved_contexts = []
         for key in document_page:
             retrieved = final_retrieved_contexts[key]
-            retrieved = sorted(retrieved, key=lambda x: x["start_index"])
+            if "start_index" in retrieved[0]:
+                retrieved = sorted(retrieved, key=lambda x: x["start_index"])
             source = retrieved[0]["source"]
             page = retrieved[0]["page"]
             page_content = ' '.join([retrieved["page_content"] for retrieved in retrieved])
-            full_page_content = retrieved[0]["full_page_content"]
+            if not self.use_full_page:
+                full_page_content = ' '.join([retrieved["page_content"] for retrieved in retrieved])
+            else:
+                full_page_content = retrieved[0]["full_page_content"]
 
             final_retrieved = {"source": source, "page_content": page_content, "full_page_content": full_page_content}
             finish_retrieved_contexts.append(final_retrieved)
@@ -443,7 +446,7 @@ def solution():
 
                 if self.use_gpt_acc:
                     # GPT Accuracy
-                    gpt_accuracy_result = calculate_gpt_accuracy_text_1(
+                    gpt_accuracy_result = calculate_gpt_accuracy_text(
                         self.client,
                         question,
                         answer,
@@ -461,7 +464,7 @@ def solution():
                     eval_results["gpt_acc"]["total"].append(gpt_accuracy)
             else:
                 # GPT Accuracy
-                gpt_accuracy_result = calculate_gpt_accuracy_text_1(
+                gpt_accuracy_result = calculate_gpt_accuracy_text(
                     self.client, question, answer, generated, contexts_
                 )
                 gpt_acc_prompt = gpt_accuracy_result["prompt"]

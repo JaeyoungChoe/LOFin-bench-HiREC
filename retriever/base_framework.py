@@ -1,25 +1,11 @@
-from pathlib import Path
-import pandas as pd
 from datetime import datetime
-import os
 import json
-from typing import List
-from glob import glob
-import numpy as np
-import requests
-import torch
-import gc
-from concurrent.futures import ProcessPoolExecutor, as_completed
+import os
 
-from tqdm.auto import tqdm
-import pandas as pd
-from langchain_core.documents import Document
-from langchain_community.embeddings import HuggingFaceEmbeddings
-from langchain.vectorstores import Chroma
+
 from langchain.document_loaders import PyMuPDFLoader
-from langchain.text_splitter import RecursiveCharacterTextSplitter
-from transformers import AutoTokenizer, AutoModelForSequenceClassification
-
+import pandas as pd
+from pathlib import Path
 
 
 class BaseFramework:
@@ -44,31 +30,8 @@ class BaseFramework:
             Path(__file__).parent.parent, "data", dataset_name, "test.jsonl"
         )
         self.dataset = pd.read_json(dataset_path, lines=True)
-        # TODO - 삭제
-        if do_sample:
-            if is_numeric_question:
-                financebench_dataset = self.dataset[
-                    self.dataset["qid"].str.startswith("financebench")
-                ] 
-                open_secqa_dataset = self.dataset[
-                    self.dataset["qid"].str.startswith("openqa")
-                ] 
-                open_finqa_dataset = self.dataset[
-                    ~(self.dataset["qid"].str.startswith("financebench"))
-                    & ~(self.dataset["qid"].str.startswith("openqa"))
-                ]
-                sampled_open_finqa_dataset = open_finqa_dataset.sample(
-                    n=100, random_state=self.seed
-                ) 
-
-                self.dataset = pd.concat(
-                    [
-                        financebench_dataset,
-                        sampled_open_finqa_dataset,
-                        open_secqa_dataset,
-                    ]
-                )
-
+        self.dataset = self.dataset.sample(n=1, random_state=self.seed)
+        
         now_str = datetime.now().strftime("%Y%m%d_%H%M%S")
         self.output_dir = os.path.join(
             output_dir,
@@ -86,143 +49,58 @@ class BaseFramework:
             print(f"Error saving json file: {e}")
             with open(filepath, "w", encoding='utf-8') as f:
                 f.write(json.dumps(data, indent=4, ensure_ascii=False, default=str))
+    
+    def get_pdf_path(self, doc_name):
+        ticker, period, report_type = doc_name.split("_")
+        if report_type == "10K":
+            doc_type = "10-K"
+        elif report_type == "10Q":
+            doc_type = "10-Q"
+        elif report_type == "8K":
+            doc_type = "8-K"
+        else:
+            doc_type = report_type
 
-    def execute(self):
-        return None
+        pdf_path = os.path.join(self.pdf_path, ticker, doc_type, f"{doc_name}.pdf")
+        return pdf_path
 
-class GPTEmbeddingPassageRetrieverModule:
-    top_k_list = [1, 3, 5]
+    def load_document(self, doc_name):
+        pdf_path = self.get_pdf_path(doc_name)
+        if not os.path.exists(pdf_path):
+            raise AssertionError(f"Document {pdf_path} not exists.")
 
-    def __init__(
-        self,
-        top_k: int = 50,
-        device: int = 4,
-        rerank = True,
-        rerank_batch_size=64,
-    ):
-        super().__init__()
-        
-        self.top_k = top_k
-        self.rerank = rerank 
+        pdf_reader = PyMuPDFLoader(pdf_path)
+        documents = pdf_reader.load()
+        return documents
 
-        if rerank:
-            if isinstance(device, str) and device.startswith("cuda"):
-                self.device = device
-            else:
-                self.device = f"cuda:{device}"
-            reranker_model_name = "naver/trecdl22-crossencoder-debertav3"
-            self.model = (
-                AutoModelForSequenceClassification.from_pretrained(
-                    reranker_model_name
-                ).to(self.device)
-            )
-            self.tokenizer = AutoTokenizer.from_pretrained(reranker_model_name)
-            self.rerank_batch_size = rerank_batch_size
+    def load_documents(self, doc_names):
+        documents = []
+        for doc_name in doc_names:
+            documents_ = self.load_document(doc_name)
+            documents.extend(documents_)
+        return documents
 
-    def unload_model(self):
-        if self.rerank:
-            self.model = None
-            del self.model
-        torch.cuda.empty_cache()
-        gc.collect()
-        print(f"DPR Reranker model unloaded")
+    def load_contexts(self, evidences):
+        doc_names = list(set(map(lambda x: x["doc_name"], evidences)))
+        documents = self.load_documents(doc_names)
 
+        evidence_infos = []
+        for evidence in evidences:
+            evidence_infos.append((evidence["doc_name"], evidence["page_num"]))
 
-    def _rank_passages(self, question, documents):
-        scores = []
-        passages = [f"Title: {document.metadata['source']}\nContent: {document.page_content}" for document in documents]
+        contexts = []
+        for passage in documents:
+            page_num = passage.metadata["page"]
+            doc_name = os.path.basename(passage.metadata["source"]).replace(".pdf", "")
+            if (doc_name, page_num) in evidence_infos:
+                contexts.append(passage)
 
-        # Split passages into batches
-        batches = [
-            passages[i : i + self.rerank_batch_size]
-            for i in range(0, len(passages), self.rerank_batch_size)
-        ]
-
-        with torch.no_grad():
-            # Loop over each batch of passages
-            for batch in batches:
-                inputs = [f"{question} [SEP] {passage}" for passage in batch]
-                batch_encoding = self.tokenizer(
-                    inputs,
-                    max_length=512,
-                    padding=True,
-                    truncation=True,
-                    return_tensors="pt",
-                ).to(self.model.device)
-
-                # Get logits from the model
-                outputs = self.model(**batch_encoding)
-                logits = outputs.logits.squeeze(-1)
-
-                # Assume higher logits indicate higher relevance
-                scores.extend(logits.cpu().tolist())
-
-        # Rank documents by score
-        ranks = [
-            {"corpus_id": i, "score": score, "text": passages[i]}
-            for i, score in enumerate(scores)
-        ]
-        ranks = sorted(ranks, key=lambda x: x["score"], reverse=True)
-
-        # Retrieve documents in ranked order
-        ranked_passages = [documents[rank["corpus_id"]] for rank in ranks]
-        return ranked_passages
-
-    def query(self, query):
-        openai_url = "http://127.0.0.1:8001/query/openai"
-        query = {
-            "query": query,
-            "top_k": str(self.top_k),
-        }
-        response_openai = requests.post(openai_url, data=json.dumps(query), headers={"Content-Type": "application/json"})
-        results = response_openai.json()["results"]
-        retrieved_documents = []
-        for result in results:
-            document = Document(page_content=result["page_content"], metadata=result["metadata"])
-            retrieved_documents.append(document)
-
-        if self.rerank:
-            retrieved_documents = self._rank_passages(query, retrieved_documents)
-
-        return retrieved_documents
-
-    def get_retrieved_documents(self, question) -> List[str]:
-        results = self.query(question)
-        return results
-
-    def retrieve(self, query):
-        def document_to_dict(document):
-            page = document.metadata["page"]
-            page_content = document.page_content
-            source = document.metadata["source"]
-            return {
-                "source": source,
-                "page": page,
-                "page_content": page_content,
-                "full_page_content": page_content,
-            }
-        retrieved_documents = self.get_retrieved_documents(question=query)
-        retrieved_documents = retrieved_documents[: self.top_k]
-        retrieved_documents = list(map(document_to_dict, retrieved_documents))
-
-        return retrieved_documents
-
-    def retrieve_documents(self, dataset: pd.DataFrame):
-        results = {}
-
-        for _, data in tqdm(dataset.iterrows(), total=len(dataset)):
-            qid = data["qid"]
-            question = data["question"]
-
-            retrieved_documents = self.retrieve(question)
-
-            results[qid] = retrieved_documents
-
-        return results
+        return contexts
 
     def evaluate_pairs(self, evidence_pages, retrieved_pages):
         correct = 0
         doc_correct = 0
+
         for evidence in evidence_pages:
             evidence_doc_name = evidence["doc_name"]
             evidence_page_num = evidence["page_num"]
@@ -238,66 +116,20 @@ class GPTEmbeddingPassageRetrieverModule:
 
         recall = correct / len(evidence_pages)
         hit = 1 if correct > 0 else 0
-        correct = 1 if correct == len(evidence_pages) else 0
+        if len(retrieved_pages) == 0:
+            precision = 0
+        else:
+            precision = correct / len(retrieved_pages)
+        accuracy = 1 if correct == len(evidence_pages) else 0
 
         return {
-            "correct": correct,
+            "correct": accuracy,
+            "len_k": len(retrieved_pages),
             "hit": hit,
             "recall": recall,
             "doc_accuracy": doc_correct,
+            "precision": precision,
         }
 
-    def _evaluate(self, dataset: pd.DataFrame, results: dict):
-        eval_results = {}
-
-        for _, data in tqdm(dataset.iterrows(), total=len(dataset)):
-            qid = data["qid"]
-            evidences = data["evidences"]
-
-            retrieved_passages = results[qid]
-            for passage in retrieved_passages:
-                passage["page"] = int(passage["page"])
-
-            for k in self.top_k_list:
-                top_k_passages = (
-                    retrieved_passages[:k]
-                    if len(retrieved_passages) > k
-                    else retrieved_passages
-                )
-                score = self.evaluate_pairs(evidences, top_k_passages)
-                if k not in eval_results:
-                    eval_results[k] = {
-                        "correct": [],
-                        "recall": [],
-                        "hit": [],
-                        "doc_accuracy": [],
-                    }
-                eval_results[k]["correct"].append(score["correct"])
-                eval_results[k]["recall"].append(score["recall"])
-                eval_results[k]["hit"].append(score["hit"])
-                eval_results[k]["doc_accuracy"].append(score["doc_accuracy"])
-
-        scores = []
-        for top_k in self.top_k_list:
-            correct = np.mean(eval_results[top_k]["correct"])
-            recall = np.mean(eval_results[top_k]["recall"])
-            hit = np.mean(eval_results[top_k]["hit"])
-            scores.append(
-                {
-                    "top_k": top_k,
-                    "accuracy": correct,
-                    "recall": recall,
-                    "hit": hit,
-                }
-            )
-        return scores
-
-    def evaluate(self, dataset: pd.DataFrame):
-        results = self.retrieve_documents(dataset)
-        scores = self._evaluate(dataset, results)
-
-        return {
-            "params": {},
-            "results": results,
-            "scores": scores,
-        }
+    def execute(self):
+        return None
