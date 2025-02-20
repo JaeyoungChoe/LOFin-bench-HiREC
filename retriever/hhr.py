@@ -80,9 +80,6 @@ class HHRFramework(BaseFramework):
         lance_db_dir = "vectordb/lancedb/.lancedb"
         os.makedirs(lance_db_dir, exist_ok=True)
         table_name = "hhr_documents"
-        
-        # TODO - 삭제
-        lance_db_dir = "/data/jaeyoung/vectordb/hhr/doc_sparse/.lancedb"
 
         db = lancedb.connect(lance_db_dir)
         retriever = db.open_table(table_name)
@@ -93,10 +90,6 @@ class HHRFramework(BaseFramework):
         db_dir = "vectordb/hhr"
         table_name = "hhr_documents"
         model_name = "intfloat/multilingual-e5-large"
-
-        # TODO - 삭제
-        db_dir = "/data/jaeyoung/vectordb/hhr/doc_dense"
-        table_name = "langchain"
 
         embedding_function = HuggingFaceEmbeddings(
             model_name=model_name,

@@ -67,10 +67,6 @@ class HybridSearch(BaseFramework):
         table_name = "hybrid_search"
         os.makedirs(lance_db_dir, exist_ok=True)
         
-        # TODO - 삭제
-        lance_db_dir = "/data/jaeyoung/vectordb/acm_finrag/.lancedb"
-        table_name = "hybrid_search_table"
-        
         db = lancedb.connect(lance_db_dir)
         hybrid_retriever = db.open_table(table_name)
 

@@ -65,11 +65,7 @@ class DenseFramework(BaseFramework):
         db_dir = "vectordb/dense"
         table_name = "dense"
         embedding_model_name = "text-embedding-3-small"
-
-        # TODO - 삭제
-        db_dir = "/data/jaeyoung/vectordb/gpt-embedding"
-        table_name = "text_embedding_3_small-2"
-
+        
         embedding_function_openai = OpenAIEmbeddings(model=embedding_model_name)
         retriever_openai = Chroma(
             persist_directory=db_dir,

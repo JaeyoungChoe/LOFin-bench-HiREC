@@ -523,7 +523,7 @@ class FinRAGFramework(BaseFramework):
             iteration_dataset['question'] = self.dataset['question']
             self.current_count += 1
 
-        # False case는 iteration이 끝났을 경우에만 추론
+        # False case: infer only after the iteration has finished.
         if self.current_count == self.max_iteration and self.max_iteration != 0:
             print("Reaching the maximum number of iterations.")
             print("Saving the final results.")
