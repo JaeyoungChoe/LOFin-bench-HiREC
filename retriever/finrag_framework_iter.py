@@ -25,8 +25,7 @@ class FinRAGFramework(BaseFramework):
             "chunk_ver": "summary_document_selection",
             "only_eval": False,
         },
-        # "db_dir": f"vectordb/dense_retriever/summary_document_selection/intfloat/multilingual-e5-large",
-        "db_dir": f"/home/jaeyoung/financebench-main/vectordb/dense_retriever/summary_document_selection/intfloat/multilingual-e5-large",
+        "db_dir": f"vectordb/dense_retriever/summary_document_selection/intfloat/multilingual-e5-large",
         "rerank": True,
     }
 
