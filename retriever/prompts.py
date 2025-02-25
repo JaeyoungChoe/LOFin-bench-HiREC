@@ -43,7 +43,7 @@ ENHANCED_PROMPT_3 = {
   "instructions": [
     "1. Read the context carefully and decide if it contains enough information to answer the question.",
     "2. If it is answerable, set 'is_answerable: answerable' and provide the answer in 'answer'.",
-    "3. If it is not answerable, set 'is_answerable: unanswerable'. Then:",
+    "3. If it is not answerable, set 'is_answerable: unanswerable'.",
     " - List the relevant document IDs in 'answerable_doc_ids' in order of relevance (from most to least relevant)."
     " - Explain what specific information is missing in 'missing_information.'",
     " - Provide a concise question in 'refined_query' to search for exactly that missing information.",
