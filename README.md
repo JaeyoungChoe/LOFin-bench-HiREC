@@ -33,3 +33,7 @@ If `--do_generate` is set to `False`, only searching will be performed, and no G
 Please check the `requirements.txt` file for the main environment settings
 
 pip install -r requirements.txt
+
+### Baseline Experiments
+
+The script `main_process_baseline.py` is used to run existing baselines for comparison experiments.
