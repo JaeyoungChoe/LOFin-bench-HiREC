@@ -1,4 +1,4 @@
-# HiREC
+# LOFin benchmark
 Hierarchical Retrieval with Evidence Curation for Open-Domain Financial Question Answering on Standardized Documents
 
 The entire document collection is shared on the following drive: 
@@ -8,7 +8,7 @@ The complete SEC filings are stored as PDF files, and please check the summariza
 Use the extracted contents of the .tar file as the path for the VectorDB.
 
 
-### How to start the framework
+### How to start the HiREC framework
 
 To start the framework, you need to run `main_process_iter.py`.
 
