@@ -5,7 +5,7 @@
 The current version is **being updated and may not reflect the final implementation**.  
 Please refer to future commits for the finalized version of the framework and benchmark dataset.
 
----
+
 The entire document collection is shared on the following drive:  
 - [Google drive](https://drive.google.com/drive/u/0/folders/1Z_G6HGPFYzQaKU5fEea5_w3p7rigov_1) . 
 
@@ -13,7 +13,7 @@ The entire document collection is shared on the following drive:
 - Refer to `summarization_results.json` for first-page summaries.  
 - Use the extracted `.tar` contents as the **path for the VectorDB**.
 
----
+
 
 ## 🚀 Running the HiREC Framework
 
