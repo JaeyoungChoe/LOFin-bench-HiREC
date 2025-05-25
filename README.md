@@ -1,16 +1,24 @@
 # LOFin benchmark
-Hierarchical Retrieval with Evidence Curation for Open-Domain Financial Question Answering on Standardized Documents
+## Hierarchical Retrieval with Evidence Curation for Open-Domain Financial Question Answering on Standardized Documents
 
-The entire document collection is shared on the following drive: 
+🚧 **Note: This repository is currently under revision.**  
+The current version is **being updated and may not reflect the final implementation**.  
+Please refer to future commits for the finalized version of the framework and benchmark dataset.
+
+---
+The entire document collection is shared on the following drive:  
 - [Google drive](https://drive.google.com/drive/u/0/folders/1Z_G6HGPFYzQaKU5fEea5_w3p7rigov_1) . 
 
-The complete SEC filings are stored as PDF files, and please check the summarization_results.json for the summary information on the first page of each document.
-Use the extracted contents of the .tar file as the path for the VectorDB.
+- SEC filings are stored as **PDF** files.  
+- Refer to `summarization_results.json` for first-page summaries.  
+- Use the extracted `.tar` contents as the **path for the VectorDB**.
 
+---
 
-### How to start the HiREC framework
+## 🚀 Running the HiREC Framework
 
-To start the framework, you need to run `main_process_iter.py`.
+To start the framework:
+ you need to run `main_process_iter.py`.
 
 You can also run it with specific argument settings. The available arguments are as follows:
 
@@ -28,12 +36,12 @@ You can also run it with specific argument settings. The available arguments are
 
 If `--do_generate` is set to `False`, only searching will be performed, and no GPT API key is required since the generation process using the GPT-4o model will be skipped.
 
-### Environment Setup
+### 🛠 Environment Setup
 
 Please check the `requirements.txt` file for the main environment settings
 
 pip install -r requirements.txt
 
-### Baseline Experiments
+### 📊 Running Baseline Experiments
 
 The script `main_process_baseline.py` is used to run existing baselines for comparison experiments.
