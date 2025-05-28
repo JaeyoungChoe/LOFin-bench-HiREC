@@ -13,6 +13,16 @@ The entire document collection is shared on the following drive:
 - Refer to `summarization_results.json` for first-page summaries.  
 - Use the extracted `.tar` contents as the **path for the VectorDB**.
 
+## 📊 Dataset Access & Security
+
+To minimize the risk of data leakage and ensure fair benchmarking, we release the test dataset in an **encrypted format**.
+
+- The encrypted benchmark test set can be decrypted easily by following the instructions in the `data/README.md` file.
+- You must **download the encrypted dataset from Google Drive** (link provided separately).
+- The dataset is intended for evaluation only and should not be used for training or data leakage-prone tasks.
+
+> 🔐 Encryption ensures the integrity of the evaluation protocol and protects against unintended usage.
+
 
 
 ## 🚀 Running the HiREC Framework
