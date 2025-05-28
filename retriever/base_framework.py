@@ -30,7 +30,7 @@ class BaseFramework:
             Path(__file__).parent.parent, "data", dataset_name, "test.jsonl"
         )
         self.dataset = pd.read_json(dataset_path, lines=True)
-        self.dataset = self.dataset.sample(n=1, random_state=self.seed)
+        # self.dataset = self.dataset.sample(n=1, random_state=self.seed)
         
         now_str = datetime.now().strftime("%Y%m%d_%H%M%S")
         self.output_dir = os.path.join(

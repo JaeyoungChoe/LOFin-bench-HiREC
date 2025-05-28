@@ -1,5 +1,8 @@
 import os
+import requests
+import json
 
+from langchain_core.documents import Document
 import numpy as np
 import torch
 from tqdm import tqdm
@@ -35,7 +38,7 @@ class DenseFramework(BaseFramework):
 
         self.device = device
 
-        self.retriever = self.get_retriever()
+        # self.retriever = self.get_retriever()
         self.reranker, self.tokenizer = self.get_reranker()
         self.rerank_batch_size = 64
 
@@ -83,8 +86,23 @@ class DenseFramework(BaseFramework):
         ).to(device)
         tokenizer = AutoTokenizer.from_pretrained(reranker_model_name)
         return model, tokenizer
-    
+
     def retrieve_passages(self, question):
+        data = {
+            "query": question,
+            "top_k": self.top_k_,
+        }
+        res = requests.post("http://127.0.0.1:8001/query/dense", data=json.dumps(data), headers={"Content-Type": "application/json"})
+
+        retrieved = res.json()["results"]
+
+        retrieved_passages = list(map(lambda x: Document(page_content=x["page_content"], metadata=x["metadata"], id=x["id"]), retrieved))
+        reranked_passages = self._rank_passages(question, retrieved_passages)
+        reranked_passages = reranked_passages[: self.top_k]
+        reranked_passages = [self.convert_to_dict(passage) for passage in reranked_passages]
+        return reranked_passages
+    
+    def retrieve_passages_(self, question):
         retrieved_passages = self.retriever.similarity_search(question, k=self.top_k_)
 
         reranked_passages = self._rank_passages(question, retrieved_passages)

@@ -8,8 +8,8 @@ import numpy as np
 import torch
 
 from retriever.gpt_direct import GPTDirect
-from retriever.hhr import HHRFramework
-from retriever.hybridsearch import HybridSearch
+# from retriever.hhr import HHRFramework
+# from retriever.hybridsearch import HybridSearch
 from retriever.dense import DenseFramework
 from retriever.rq_rag import RQRag
 from retriever.ircot import IRCoTFramework
@@ -50,24 +50,24 @@ def main(args):
     device = args.device
 
     if framework_name == "hhr":
-        framework = HHRFramework(
-            dataset_name,
-            pdf_path,
-            output_dir,
-            seed,
-            device,
-            is_numeric_question=is_numeric_question,
-        )
+        # framework = HHRFramework(
+        #     dataset_name,
+        #     pdf_path,
+        #     output_dir,
+        #     seed,
+        #     device,
+        #     is_numeric_question=is_numeric_question,
+        # )
         framework.execute()
     elif framework_name == "hybridsearch":
-        framework = HybridSearch(
-            dataset_name,
-            pdf_path,
-            output_dir,
-            seed,
-            device,
-            is_numeric_question=is_numeric_question,
-        )
+        # framework = HybridSearch(
+        #     dataset_name,
+        #     pdf_path,
+        #     output_dir,
+        #     seed,
+        #     device,
+        #     is_numeric_question=is_numeric_question,
+        # )
         framework.execute()
     elif framework_name == "dense":
         framework = DenseFramework(
@@ -121,13 +121,13 @@ if __name__ == "__main__":
     parser = argparse.ArgumentParser()
 
     parser.add_argument(
-        "--output_dir", type=str, default="results", help="Output directory"
+        "--output_dir", type=str, default="/data/jaeyoung/finrag_results/framework", help="Output directory"
     )
     parser.add_argument(
         "--framework_name",
         type=str,
         # required=True,
-        default="ircot",
+        default="dense",
         help="Framework name for inference",
     )
 

@@ -60,7 +60,7 @@ class FinRAGFramework(BaseFramework):
         use_oracle_passage=False,
         is_numeric_question=True,
         generate_method="pot",
-        device="0",
+        device="4,5,6,7",
     ):
         super().__init__(
             dataset_name,
@@ -71,7 +71,11 @@ class FinRAGFramework(BaseFramework):
         )
 
         self.pdf_path = pdf_path
-        self.device = f"cuda:{device}" if torch.cuda.is_available() else "cpu"
+        if torch.cuda.is_available():
+            os.environ["CUDA_VISIBLE_DEVICES"] = device
+            self.device = "cuda:0"  # CUDA_VISIBLE_DEVICES로 인해 실제로는 지정된 GPU 중 첫 번째를 사용
+        else:
+            self.device = "cpu"
 
         print("use_oracle_passage", use_oracle_passage)
 
