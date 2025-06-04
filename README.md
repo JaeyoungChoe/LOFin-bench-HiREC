@@ -5,15 +5,26 @@
 The current version is **being updated and may not reflect the final implementation**.  
 Please refer to future commits for the finalized version of the framework and benchmark dataset.
 
+---
 
-The entire document collection is shared on the following drive:  
-- [Google drive](https://drive.google.com/drive/u/0/folders/1Z_G6HGPFYzQaKU5fEea5_w3p7rigov_1) . 
+## 🔍 Overview: LOFin Framework
 
-- SEC filings are stored as **PDF** files.  
-- Refer to `summarization_results.json` for first-page summaries.  
-- Use the extracted `.tar` contents as the **path for the VectorDB**.
+LOFin is a financial-domain QA benchmark featuring complex multi-hop questions over standardized documents such as SEC 10-K filings.  
+Our proposed framework, **HiREC**, combines hierarchical retrieval with answerability-aware generation.
 
-## 📊 Dataset Access & Security
+![Overview](figures/overview_v1.1.png)
+
+The pipeline consists of:
+- **Document Retriever**: Finds relevant documents.
+- **Passage Retriever**: Extracts fine-grained evidence.
+- **Passage Filter + Answerability Checker**: Ensures relevant, answerable input only.
+- **Complementary Question Generator**: Generates a fallback query if the question is unanswerable.
+- **Answer Generator**: Produces the final answer based on curated evidence.
+
+> ⚙️ Although the **evidence curation** process includes multiple logical steps (e.g., filtering, answerability check, complementary question generation), all of them are executed through **a single LLM inference**. This makes the framework both efficient and easily extensible.
+---
+
+## 📁 Dataset Access & Security
 
 To minimize the risk of data leakage and ensure fair benchmarking, we release the test dataset in an **encrypted format**.
 
@@ -23,7 +34,12 @@ To minimize the risk of data leakage and ensure fair benchmarking, we release th
 
 > 🔐 Encryption ensures the integrity of the evaluation protocol and protects against unintended usage.
 
-
+The entire document collection is shared on the following drive:  
+- [Google drive](https://drive.google.com/drive/u/0/folders/1Z_G6HGPFYzQaKU5fEea5_w3p7rigov_1)  
+  - SEC filings are stored as **PDF** files  
+  - Refer to `summarization_results.json` for first-page summaries  
+  - Use the extracted `.tar` contents as the **path for the VectorDB**
+---
 
 ## 🚀 Running the HiREC Framework
 
