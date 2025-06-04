@@ -72,13 +72,3 @@ pip install -r requirements.txt
 
 The script `main_process_baseline.py` is used to run existing baselines for comparison experiments.
 
-
---- 
-## 💡 Why HiREC? Motivation Example
-
-HiREC is designed for complex questions like comparisons, calculations, and multi-hop reasoning.  
-Instead of failing on unanswerable or insufficient evidence, HiREC decomposes the query into **complementary questions**, improving answer accuracy.
-
-![Introduction](figures/introduction_v0.7.png)
-
----
