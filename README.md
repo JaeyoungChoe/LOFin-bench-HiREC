@@ -1,5 +1,4 @@
-# LOFin benchmark & HiREC framework
-## Hierarchical Retrieval with Evidence Curation for Open-Domain Financial Question Answering on Standardized Documents (ACL 2025 Findings)
+# Hierarchical Retrieval with Evidence Curation for Open-Domain Financial Question Answering on Standardized Documents (ACL 2025 Findings)
 
 ## 🔍 Overview: LOFin Framework
 
