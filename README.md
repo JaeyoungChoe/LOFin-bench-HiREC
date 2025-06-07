@@ -64,7 +64,30 @@ The following arguments can be used in both modes:
 
 ---
 
-### 1. Batch Evaluation Mode
+### 1. API Mode (Real-Time Single Query Execution)
+This mode allows for interactive, per-query processing via the `finrag_serving` module.
+
+> ✅ This is the **recommended method** for debugging, prototyping, or real-time usage scenarios.
+
+You can run the server using the following command:
+```bash
+CUDA_VISIBLE_DEVICES=0,1,2 python finrag_serving/main.py \
+    --dataset numeric_text \
+    --pdf_path pdfs_v2 \
+    --output_dir results \
+    --db_dir vectordb/summary_document_selection \
+    --debug False \
+    --batch_size 32 \
+    --max_new_tokens 1024 \
+    --gpu_devices 0,1,2 \
+    --do_generate True
+```
+
+This is the preferred method if you want to test the system one query at a time (e.g., through API integration or a debugging environment).
+
+---
+
+### 2. Batch Evaluation Mode
 This is the original method for executing HiREC using `main_process_iter.py`.
 
 Example command:
@@ -84,27 +107,6 @@ python main_process_iter.py \
 ```
 
 If `--do_generate` is set to `False`, only the retrieval process is performed, and no GPT API key is required.
-
----
-
-### 2. API Mode (Real-Time Single Query Execution)
-This mode allows for interactive, per-query processing via the `finrag_serving` module.
-
-You can run the server using the following command:
-```bash
-CUDA_VISIBLE_DEVICES=0,1,2 python finrag_serving/main.py \
-    --dataset numeric_text \
-    --pdf_path pdfs_v2 \
-    --output_dir results \
-    --db_dir vectordb/summary_document_selection \
-    --debug False \
-    --batch_size 32 \
-    --max_new_tokens 1024 \
-    --gpu_devices 0,1,2 \
-    --do_generate True
-```
-
-This is the preferred method if you want to test the system one query at a time (e.g., through API integration or a debugging environment).
 
 ---
 
