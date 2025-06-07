@@ -38,9 +38,9 @@ class BaseFramework:
         )
 
     def load_dataset(self, dataset_name: str):
-        """데이터셋 로드"""
+        """Load dataset"""
         try:
-            # 데이터셋 이름에 따라 적절한 디렉토리와 파일명 결정
+            # Determine appropriate directory and filename based on dataset name
             if dataset_name in ["numeric_text", "numeric_table", "textual"]:
                 dataset_path = os.path.join(
                     Path(__file__).parent.parent.parent, "data", "by_answer_type", f"{dataset_name}_test.jsonl"
@@ -54,15 +54,15 @@ class BaseFramework:
                     Path(__file__).parent.parent.parent, "data", "all", "all_test.jsonl"
                 )
             else:
-                raise ValueError(f"알 수 없는 데이터셋 이름: {dataset_name}")
+                raise ValueError(f"Unknown dataset name: {dataset_name}")
 
-            print(f"데이터셋 파일 경로: {dataset_path}")
+            print(f"Dataset file path: {dataset_path}")
             dataset = pd.read_json(dataset_path, lines=True)
-            print(f"데이터셋 로드 완료: {len(dataset)} 개의 쿼리")
+            print(f"Dataset loaded: {len(dataset)} queries")
             return dataset
             
         except Exception as e:
-            print(f"데이터셋 로드 중 오류 발생: {str(e)}")
+            print(f"Error loading dataset: {str(e)}")
             raise e
 
     def save_json(self, filepath, data):
