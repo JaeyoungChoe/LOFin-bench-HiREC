@@ -26,11 +26,7 @@ class BaseFramework:
         self.seed = seed
         self.is_numeric_question = is_numeric_question
 
-        dataset_path = os.path.join(
-            Path(__file__).parent.parent, "data", dataset_name, "test.jsonl"
-        )
-        self.dataset = pd.read_json(dataset_path, lines=True)
-        # self.dataset = self.dataset.sample(n=1, random_state=self.seed)
+        self.dataset = self.load_dataset(dataset_name)
         
         now_str = datetime.now().strftime("%Y%m%d_%H%M%S")
         self.output_dir = os.path.join(
@@ -40,6 +36,34 @@ class BaseFramework:
             dataset_name,
             f"{self.framework_name}_{dataset_name}_{now_str}",
         )
+
+    def load_dataset(self, dataset_name: str):
+        """데이터셋 로드"""
+        try:
+            # 데이터셋 이름에 따라 적절한 디렉토리와 파일명 결정
+            if dataset_name in ["numeric_text", "numeric_table", "textual"]:
+                dataset_path = os.path.join(
+                    Path(__file__).parent.parent.parent, "data", "by_answer_type", f"{dataset_name}_test.jsonl"
+                )
+            elif dataset_name in ["finqa", "financebench", "secqa"]:
+                dataset_path = os.path.join(
+                    Path(__file__).parent.parent.parent, "data", "by_data_source", f"{dataset_name}_test.jsonl"
+                )
+            elif dataset_name == "all":
+                dataset_path = os.path.join(
+                    Path(__file__).parent.parent.parent, "data", "all", "all_test.jsonl"
+                )
+            else:
+                raise ValueError(f"알 수 없는 데이터셋 이름: {dataset_name}")
+
+            print(f"데이터셋 파일 경로: {dataset_path}")
+            dataset = pd.read_json(dataset_path, lines=True)
+            print(f"데이터셋 로드 완료: {len(dataset)} 개의 쿼리")
+            return dataset
+            
+        except Exception as e:
+            print(f"데이터셋 로드 중 오류 발생: {str(e)}")
+            raise e
 
     def save_json(self, filepath, data):
         try:

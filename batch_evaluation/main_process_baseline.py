@@ -36,7 +36,7 @@ def set_seed(seed):
 
 def main(args):
     dataset_name = args.dataset
-    pdf_path = "/data/jaeyoung/pdfs_v2"
+    pdf_path = "pdfs_v2"
     output_dir = args.output_dir
     seed = args.seed
     set_seed(seed)
@@ -121,7 +121,7 @@ if __name__ == "__main__":
     parser = argparse.ArgumentParser()
 
     parser.add_argument(
-        "--output_dir", type=str, default="/data/jaeyoung/finrag_results/framework", help="Output directory"
+        "--output_dir", type=str, default="finrag_results/framework", help="Output directory"
     )
     parser.add_argument(
         "--framework_name",

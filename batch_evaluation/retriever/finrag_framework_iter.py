@@ -12,7 +12,6 @@ from retriever.page_retriever import (
 from retriever.LLMRetrievalModel import LLMRetrievalModel
 
 import torch
-from retriever.base_framework import GPTEmbeddingPassageRetrieverModule
 
 class FinRAGFramework(BaseFramework):
     framework_name = "finrag"
@@ -36,8 +35,8 @@ class FinRAGFramework(BaseFramework):
         "passage_type": "base",
         "only_eval": False,
     }
-    # page_retriever_model_name = "finqa_models/DeBERTa_table_random-table_2e-7"
-    page_retriever_model_name = "naver/trecdl22-crossencoder-debertav3"
+    page_retriever_model_name = "finqa_models/DeBERTa_table_random-table_2e-7"
+    # page_retriever_model_name = "naver/trecdl22-crossencoder-debertav3"
 
     generator_args = {
         "openai_model": "gpt-4o",
@@ -72,8 +71,8 @@ class FinRAGFramework(BaseFramework):
 
         self.pdf_path = pdf_path
         if torch.cuda.is_available():
-            os.environ["CUDA_VISIBLE_DEVICES"] = device
-            self.device = "cuda:0"  # CUDA_VISIBLE_DEVICES로 인해 실제로는 지정된 GPU 중 첫 번째를 사용
+            os.environ["CUDA_VISIBLE_DEVICES"] = str(device)
+            self.device = "cuda:0"
         else:
             self.device = "cpu"
 
@@ -178,18 +177,6 @@ class FinRAGFramework(BaseFramework):
             
             page_retrieval_results = self.page_retrieval(iteration_dataset, document_retrieval_results["results"])
         return document_retrieval_results, page_retrieval_results, iteration_dataset
-    
-    def init_dpr(self):
-        device = self.device
-        dpr_retriever = GPTEmbeddingPassageRetrieverModule(device=device)
-        return dpr_retriever
-    
-    def dpr_retrieval(self, iteration_dataset):
-        dpr_retriever = self.init_dpr()
-        dpr_retriever.top_k_list = [1,3,5,10,15]
-        dpr_retrieval_results = dpr_retriever.evaluate(iteration_dataset)
-        dpr_retriever.unload_model()
-        return {}, dpr_retrieval_results, iteration_dataset
     
     def generate_answers(self, page_retrieval_results, iteration_dataset):
         generator = self.init_generator()
@@ -337,11 +324,7 @@ class FinRAGFramework(BaseFramework):
         document_retrieval_results, retrieval_results = {}, []
         iteration_document_results, iteration_passage_results, iteration_generate_results = {}, {}, {}
 
-        if self.framework_name == "finrag_dpr":
-            document_retrieval_results, page_retrieval_results, iteration_dataset = self.dpr_retrieval(iteration_dataset)
-            document_retrieval_results['scores'], document_retrieval_results['results'] = {}, {}
-        else:
-            document_retrieval_results, page_retrieval_results, iteration_dataset = self.hierarchical_retrieval(iteration_dataset)
+        document_retrieval_results, page_retrieval_results, iteration_dataset = self.hierarchical_retrieval(iteration_dataset)
         self.dataset = iteration_dataset.copy()
         retrieval_results.append(page_retrieval_results['results'].copy())
         
@@ -390,10 +373,7 @@ class FinRAGFramework(BaseFramework):
                 
 
             # Re-process the search process for the false case
-            if self.framework_name == "finrag_dpr":
-                iteration_document_results, iteration_passage_results, _ = self.dpr_retrieval(iteration_dataset)
-            else:
-                iteration_document_results, iteration_passage_results, _ = self.hierarchical_retrieval(iteration_dataset)
+            iteration_document_results, iteration_passage_results, _ = self.hierarchical_retrieval(iteration_dataset)
     
             # sum-set operation for the passage retrieval results
             for qid in iteration_passage_results['results']:                

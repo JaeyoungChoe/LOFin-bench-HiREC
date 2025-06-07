@@ -6,3 +6,6 @@ pdfs/*
 vectorstores/*
 results/*
 new_results/*
+data/*
+finrag_api/results/*
+finrag_api/logs/*

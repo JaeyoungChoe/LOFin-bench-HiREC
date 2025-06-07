@@ -4,8 +4,8 @@ import numpy as np
 from openai import OpenAI
 from tqdm import tqdm
 
-from retriever.base_framework import BaseFramework
-from retriever.utils import (
+from .base_framework import BaseFramework
+from .utils import (
     calculate_numeric_accuracy,
     calculate_gpt_accuracy_text,
     get_original_dataset_name,

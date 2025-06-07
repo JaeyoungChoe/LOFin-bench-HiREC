@@ -53,7 +53,7 @@ def main(args):
 
     device = args.device
 
-    if framework_name in ["finrag", "finrag_dpr"]:
+    if framework_name in ["finrag"]:
         framework = FinRAGFramework(
             dataset_name,
             pdf_path,
