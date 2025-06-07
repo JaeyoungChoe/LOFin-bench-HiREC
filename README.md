@@ -1,11 +1,6 @@
 # LOFin benchmark & HiREC framework
 ## Hierarchical Retrieval with Evidence Curation for Open-Domain Financial Question Answering on Standardized Documents (ACL 2025 Findings)
 
-🚧 **Note: This repository is currently under revision.**  
-The current version is **being updated and may not reflect the final implementation**.  
-Please refer to future commits for the finalized version of the framework and benchmark dataset.
-
----
 
 ## 🔍 Overview: LOFin Framework
 
@@ -46,6 +41,7 @@ The entire document collection is shared on the following drive:
 ## 🚀 Running the HiREC Framework
 
 You can run the HiREC framework in **two different modes**, depending on whether you want to evaluate in batch or serve queries one-by-one.
+> ✅ **Recommended:** We recommend using the API mode for most use cases, especially for debugging, real-time interaction, and modular development. It offers greater flexibility and is more suitable for iterative or interactive QA scenarios.
 
 ### 🔢 Common Parameters
 The following arguments can be used in both modes:
@@ -62,12 +58,12 @@ The following arguments can be used in both modes:
 - `--do_generate`: Whether to continue the generation process within the framework.
 - `--continue_iteration`: An option to continue running after a specific number of iterations.
 
+
 ---
 
 ### 1. API Mode (Real-Time Single Query Execution)
 This mode allows for interactive, per-query processing via the `finrag_serving` module.
 
-> ✅ This is the **recommended method** for debugging, prototyping, or real-time usage scenarios.
 
 You can run the server using the following command:
 ```bash
