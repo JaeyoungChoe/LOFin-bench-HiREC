@@ -22,6 +22,7 @@ The pipeline consists of:
 - **Answer Generator**: Produces the final answer based on curated evidence.
 
 > ⚙️ Although the **evidence curation** process includes multiple logical steps (e.g., filtering, answerability check, complementary question generation), all of them are executed through **a single LLM inference**. This makes the framework both efficient and easily extensible.
+
 ---
 
 ## 📁 Dataset Access & Security
@@ -39,14 +40,15 @@ The entire document collection is shared on the following drive:
   - SEC filings are stored as **PDF** files  
   - Refer to `summarization_results.json` for first-page summaries  
   - Use the extracted `.tar` contents as the **path for the VectorDB**
+
 ---
 
 ## 🚀 Running the HiREC Framework
 
-To start the framework:
- you need to run `main_process_iter.py`.
+You can run the HiREC framework in **two different modes**, depending on whether you want to evaluate in batch or serve queries one-by-one.
 
-You can also run it with specific argument settings. The available arguments are as follows:
+### 🔢 Common Parameters
+The following arguments can be used in both modes:
 
 - `--output_dir`: Path to save results.
 - `--framework_name`: The framework being used. Ours is `finrag`.
@@ -60,15 +62,59 @@ You can also run it with specific argument settings. The available arguments are
 - `--do_generate`: Whether to continue the generation process within the framework.
 - `--continue_iteration`: An option to continue running after a specific number of iterations.
 
-If `--do_generate` is set to `False`, only searching will be performed, and no GPT API key is required since the generation process using the GPT-4o model will be skipped.
+---
+
+### 1. Batch Evaluation Mode
+This is the original method for executing HiREC using `main_process_iter.py`.
+
+Example command:
+```bash
+python main_process_iter.py \
+    --output_dir results \
+    --framework_name finrag \
+    --generate_method numeric \
+    --dataset numeric_text \
+    --use_gpt gpt-4o \
+    --max_relevant_ids 10 \
+    --iteration 3 \
+    --max_contexts 8 \
+    --use_full_page True \
+    --do_generate True \
+    --continue_iteration False
+```
+
+If `--do_generate` is set to `False`, only the retrieval process is performed, and no GPT API key is required.
+
+---
+
+### 2. API Mode (Real-Time Single Query Execution)
+This mode allows for interactive, per-query processing via the `finrag_serving` module.
+
+You can run the server using the following command:
+```bash
+CUDA_VISIBLE_DEVICES=1,3 python finrag_serving/main.py \
+    --dataset numeric_text \
+    --pdf_path /mnt/backup_ssd/jaeyoung/pdfs_v2 \
+    --output_dir results \
+    --db_dir /mnt/backup_ssd/jaeyoung/vectordb/summary_document_selection \
+    --debug False \
+    --batch_size 32 \
+    --max_new_tokens 1024 \
+    --gpu_devices 1,3 \
+    --do_generate True
+```
+
+This is the preferred method if you want to test the system one query at a time (e.g., through API integration or a debugging environment).
+
+---
 
 ### 🛠 Environment Setup
 
-Please check the `requirements.txt` file for the main environment settings
-
+Please check the `requirements.txt` file for the main environment settings:
+```bash
 pip install -r requirements.txt
+```
 
 ### 📊 Running Baseline Experiments
 
-The script `main_process_baseline.py` is used to run existing baselines for comparison experiments.
-
+Use the script `main_process_baseline.py` to run baseline systems for comparison experiments.
