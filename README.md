@@ -92,15 +92,15 @@ This mode allows for interactive, per-query processing via the `finrag_serving` 
 
 You can run the server using the following command:
 ```bash
-CUDA_VISIBLE_DEVICES=1,3 python finrag_serving/main.py \
+CUDA_VISIBLE_DEVICES=0,1,2 python finrag_serving/main.py \
     --dataset numeric_text \
-    --pdf_path /mnt/backup_ssd/jaeyoung/pdfs_v2 \
+    --pdf_path pdfs_v2 \
     --output_dir results \
-    --db_dir /mnt/backup_ssd/jaeyoung/vectordb/summary_document_selection \
+    --db_dir vectordb/summary_document_selection \
     --debug False \
     --batch_size 32 \
     --max_new_tokens 1024 \
-    --gpu_devices 1,3 \
+    --gpu_devices 0,1,2 \
     --do_generate True
 ```
 
