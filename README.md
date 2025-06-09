@@ -90,11 +90,11 @@ python main_process_iter.py \
     --framework_name finrag \
     --generate_method numeric \
     --dataset numeric_text \
-    --use_gpt gpt-4o \
+    --use_gpt False \
     --max_relevant_ids 10 \
     --iteration 3 \
-    --max_contexts 8 \
-    --use_full_page True \
+    --max_contexts 10 \
+    --use_full_page False \
     --do_generate True \
     --continue_iteration False
 ```
