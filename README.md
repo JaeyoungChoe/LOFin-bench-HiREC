@@ -39,7 +39,6 @@ The entire document collection is shared on the following drive:
 ## 🚀 Running the HiREC Framework
 
 You can run the HiREC framework in **two different modes**, depending on whether you want to evaluate in batch or serve queries one-by-one.
-> ✅ **Recommended:** We recommend using the API mode for most use cases, especially for debugging, real-time interaction, and modular development. It offers greater flexibility and is more suitable for iterative or interactive QA scenarios.
 
 ### 🔢 Common Parameters
 The following arguments can be used in both modes:
