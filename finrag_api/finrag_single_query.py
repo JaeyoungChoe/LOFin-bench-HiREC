@@ -108,6 +108,7 @@ class FinRAGSingleQuery:
         try:
             original_question = query['question']
             question = query['question']
+            relevant_pages = []
             for iteration in range(self.args.get("max_iteration", 4)):
                 self.logger.info(f"Starting query processing: {question}")
                 
@@ -118,24 +119,27 @@ class FinRAGSingleQuery:
                 
                 # 2. Document retrieval
                 self.logger.debug("Starting document retrieval")
-                documents = await self.document_retriever.retrieve_documents(transformed_query)
+                documents = await self.document_retriever.retrieve_documents(transformed_query, k=100)
                 self.logger.debug(f"Number of retrieved documents: {len(documents)}")
                 
                 # 3. Page retrieval
                 self.logger.debug("Starting page retrieval")
-                doc_names = [doc["source"] for doc in documents]
+                doc_names = [doc["source"] for doc in documents[:10]]
                 page_result = await self.page_retriever.retrieve_pages(
                     original_question,
                     doc_names,
-                    k=self.args.get("pages_per_doc", 3)
+                    k=self.args.get("pages_per_doc", 10)
                 )
                 self.logger.debug(f"Number of retrieved pages: {len(page_result['results'])}")
-                pages = page_result['results']
+                pages = page_result['results'][:5]
                 
                 # 4. Evidence collection
                 self.logger.debug("Starting evidence collection")
+                pages = relevant_pages + pages
                 evidence = await self.evidence_curator.curate_evidence(original_question, pages)
                 self.logger.debug(f"Number of collected evidence: {len(evidence['relevant_pages'])}")
+                
+                relevant_pages = evidence['relevant_pages']
 
                 # If answerable is 'answerable', break the loop
                 if evidence['is_answerable'] == True:
