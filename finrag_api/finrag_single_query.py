@@ -124,7 +124,7 @@ class FinRAGSingleQuery:
                 # 3. Page retrieval
                 doc_names = [doc["source"] for doc in documents[:10]]
                 page_result = await self.page_retriever.retrieve_pages(
-                    original_question,
+                    question,
                     doc_names,
                     k=self.args.get("pages_per_doc", 10)
                 )
@@ -135,7 +135,6 @@ class FinRAGSingleQuery:
                 self.logger.debug("Starting Evidence collection")
                 pages = relevant_pages + pages
                 evidence = await self.evidence_curator.curate_evidence(original_question, pages)
-                
                 
                 relevant_pages = evidence['relevant_pages']
 
