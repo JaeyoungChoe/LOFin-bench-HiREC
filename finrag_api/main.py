@@ -48,6 +48,10 @@ def setup_logging(debug_mode: bool, output_dir: str):
 async def main(args):
     # Convert args to dictionary
     args_dict = vars(args)
+
+    for key in ['debug', 'use_full_page', 'do_generate', 'use_reranker', 'is_numeric_question', 'use_gpt_acc']:
+        if key in args_dict:
+            args_dict[key] = args_dict[key] == 'true'
     
     # Setup logging
     logger = setup_logging(args_dict["debug"], args_dict["output_dir"])
@@ -178,4 +182,4 @@ if __name__ == "__main__":
     parser.add_argument("--answer_type", type=str, default="cot", choices=["cot", "pot", "direct"], help="Answer generation type")
     
     args = parser.parse_args()
-    asyncio.run(main(args)) 
+    asyncio.run(main(args))

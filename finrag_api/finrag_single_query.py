@@ -153,7 +153,7 @@ class FinRAGSingleQuery:
                 },
                 "query": original_question,
                 "transformed_query": transformed_query,
-                "documents": [doc["source"] for doc in documents],
+                "documents": doc_names,
                 "retrieved_pages": [page["source"] +"_"+ str(page["page"]) for page in evidence["relevant_pages"]],
                 "evidence": evidence
             }
@@ -174,14 +174,6 @@ class FinRAGSingleQuery:
                     "answer_type": answer_type
                 }
                 retrieval_result.update(generation_result)
-            
-            if self.args.get("debug", False):
-                # Save intermediate results in debug mode
-                debug_dir = os.path.join(self.args["output_dir"], "debug")
-                os.makedirs(debug_dir, exist_ok=True)
-                debug_file = os.path.join(debug_dir, f"query_{self.current_idx}_debug.json")
-                with open(debug_file, 'w', encoding='utf-8') as f:
-                    json.dump(retrieval_result, f, ensure_ascii=False, indent=2)
             
             return retrieval_result
             

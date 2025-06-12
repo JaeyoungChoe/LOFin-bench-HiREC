@@ -1,6 +1,6 @@
 from typing import Dict, Any
 from .llm_server import LLMServer
-from batch_evaluation.retriever.prompts import QUERY_REWRITING_PROMPT_3
+from utils.prompts import QUERY_REWRITING_PROMPT_3
 
 class QueryTransformer:
     def __init__(self, llm_server: LLMServer):

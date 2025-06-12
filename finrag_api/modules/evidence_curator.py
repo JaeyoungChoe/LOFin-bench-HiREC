@@ -1,6 +1,6 @@
 from typing import Dict, Any, List
 from .llm_server import LLMServer
-from batch_evaluation.retriever.prompts import ENHANCED_PROMPT_3, FULL_PROMPT
+from utils.prompts import ENHANCED_PROMPT_3, FULL_PROMPT
 
 class EvidenceCurator:
     def __init__(self, llm_server: LLMServer, args):
