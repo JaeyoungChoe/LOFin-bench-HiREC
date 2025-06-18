@@ -1,4 +1,4 @@
-# Hierarchical Retrieval with Evidence Curation for Open-Domain Financial Question Answering on Standardized Documents (ACL 2025 Findings)
+# [Hierarchical Retrieval with Evidence Curation for Open-Domain Financial Question Answering on Standardized Documents (ACL 2025 Findings)](https://arxiv.org/abs/2505.20368)
 
 ## 🔍 Overview: LOFin Framework
 
