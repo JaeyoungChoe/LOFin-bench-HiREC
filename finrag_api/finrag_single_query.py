@@ -109,24 +109,24 @@ class FinRAGSingleQuery:
             original_question = query['question']
             question = query['question']
             relevant_pages = []
+            self.logger.info(f"qid: {query['qid']}, Original question: {original_question}")
             for iteration in range(self.args.get("max_iteration", 4)):
                
                 # 1. Query transformation
                 self.logger.debug("Starting Query transformation")
                 transformed_query = await self.query_transformer.transform_query(question)
 
-                
                 # 2. Document retrieval
                 self.logger.debug("Starting Hierarchical retrieval")
                 documents = await self.document_retriever.retrieve_documents(transformed_query, k=100)
 
                 
                 # 3. Page retrieval
-                doc_names = [doc["source"] for doc in documents[:10]]
+                doc_names = [doc["source"] for doc in documents[:5]]
                 page_result = await self.page_retriever.retrieve_pages(
                     question,
                     doc_names,
-                    k=self.args.get("pages_per_doc", 10)
+                    k=self.args.get("pages_per_doc", 20)
                 )
 
                 pages = page_result['results'][:5]

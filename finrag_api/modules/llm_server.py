@@ -31,16 +31,13 @@ class LLMServer:
             # Initialize LLM model
             self.tokenizer = AutoTokenizer.from_pretrained(
                 self.args["llm_model_name"],
-                trust_remote_code=True
             )
             
             # Load model distributed across multiple GPUs
             self.model = AutoModelForCausalLM.from_pretrained(
                 self.args["llm_model_name"],
-                device_map="auto",  # Automatically distribute across GPUs
-                trust_remote_code=True,
-                torch_dtype="auto",
-                max_memory={i: f"21GiB" for i in range(torch.cuda.device_count())}
+                device_map="auto",
+                torch_dtype="auto"
             )
             
             self.initialized = True
@@ -83,10 +80,7 @@ class LLMServer:
             with torch.no_grad():
                 outputs = self.model.generate(
                     **model_inputs,
-                    max_new_tokens=max_length or self.max_new_tokens,
-                    num_return_sequences=1,
-                    temperature=0.01,
-                    do_sample=True
+                    max_new_tokens=self.max_new_tokens
                 )
             
             # Decode results

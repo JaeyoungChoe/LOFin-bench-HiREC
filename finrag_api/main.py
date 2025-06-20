@@ -153,30 +153,30 @@ if __name__ == "__main__":
     parser.add_argument("--db_dir", type=str, required=True, help="Vector DB directory")
     
     # Debug settings
-    parser.add_argument("--debug", default=False, help="Enable debug mode")
+    parser.add_argument("--debug", type=str.lower, choices=['true', 'false'], default='false', help="Enable debug mode")
     parser.add_argument("--seed", type=int, default=42, help="Random seed (default: 42)")
     
     # Framework settings
-    parser.add_argument("--iteration", type=int, default=4, help="Number of iterations")
+    parser.add_argument("--max_iteration", type=int, default=4, help="Number of iterations")
     parser.add_argument("--max_contexts", type=int, default=10, help="Maximum number of contexts")
     parser.add_argument("--max_relevant_ids", type=int, default=10, help="Maximum number of relevant documents")
-    parser.add_argument("--use_full_page", default=False, help="Use full page")
-    parser.add_argument("--do_generate", default=False, help="Enable generation")
+    parser.add_argument("--use_full_page", type=str.lower, choices=['true', 'false'], default='false', help="Use full page")
+    parser.add_argument("--do_generate", type=str.lower, choices=['true', 'false'], default='false', help="Enable generation")
     
     # Retriever settings
     parser.add_argument("--model_name", type=str, default="intfloat/multilingual-e5-large", help="Embedding model name")
     parser.add_argument("--cross_encoder_model_name", type=str, default="./models/DeBERTa_table_random-table_2e-7", help="Cross-encoder model name")
-    parser.add_argument("--use_reranker", default=True, type=bool, help="Use reranker")
+    parser.add_argument("--use_reranker", type=str.lower, choices=['true', 'false'], default='true', help="Use reranker")
     parser.add_argument("--reranker_model_name", type=str, default="naver/trecdl22-crossencoder-debertav3", help="Reranker model name")
-    parser.add_argument("--batch_size", type=int, default=32, help="Batch size")
+    parser.add_argument("--batch_size", type=int, default=64, help="Batch size")
     parser.add_argument("--max_new_tokens", type=int, default=1024, help="Maximum number of new tokens")
     parser.add_argument("--llm_model_name", type=str, default="Qwen/Qwen2.5-7B-Instruct", help="LLM model name")
-    parser.add_argument("--openai_model_name", type=str, default="gpt-4", help="OpenAI model name")
+    parser.add_argument("--openai_model_name", type=str, default="gpt-4o", help="OpenAI model name")
     parser.add_argument("--gpu_devices", type=str, default="0,1,2", help="List of GPUs to use")
     parser.add_argument("--pages_per_doc", type=int, default=10, help="Number of pages per document")
     
     # Generator settings
-    parser.add_argument("--temp", type=float, default=0.7, help="Generator temperature")
+    parser.add_argument("--temp", type=float, default=0.01, help="Generator temperature")
     parser.add_argument("--is_numeric_question", action="store_true", help="Is numeric question")
     parser.add_argument("--use_gpt_acc", action="store_true", help="Use GPT accuracy")
     parser.add_argument("--answer_type", type=str, default="cot", choices=["cot", "pot", "direct"], help="Answer generation type")

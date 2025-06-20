@@ -20,7 +20,7 @@ class DocumentRetriever:
         else:
             self.device = "cpu"
             
-        self.model = None
+        self.reranker = None
         self.tokenizer = None
         self.embeddings = None
         self.retriever = None
@@ -71,11 +71,9 @@ class DocumentRetriever:
             if self.args["use_reranker"]:
                 self.tokenizer = AutoTokenizer.from_pretrained(
                     self.args["reranker_model_name"],
-                    trust_remote_code=True
-                )
-                self.model = AutoModelForSequenceClassification.from_pretrained(
+                )   
+                self.reranker = AutoModelForSequenceClassification.from_pretrained(
                     self.args["reranker_model_name"],
-                    trust_remote_code=True
                 ).to(self.device)  # Direct device assignment
             
             self.initialized = True
@@ -182,7 +180,7 @@ class DocumentRetriever:
                     ).to(self.device)
                     
                     # Calculate scores
-                    outputs = self.model(**batch_encoding)
+                    outputs = self.reranker(**batch_encoding)
                     logits = outputs.logits.squeeze(-1)
                     scores.extend(logits.cpu().tolist())
             
@@ -198,9 +196,9 @@ class DocumentRetriever:
     
     def cleanup(self):
         """Clean up resources"""
-        if self.model:
-            self.model = None
-            del self.model
+        if self.reranker:
+            self.reranker = None
+            del self.reranker
         if self.tokenizer:
             self.tokenizer = None
             del self.tokenizer

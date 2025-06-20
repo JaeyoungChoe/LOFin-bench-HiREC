@@ -59,12 +59,9 @@ class PageRetriever:
             # Initialize Cross-encoder model
             self.tokenizer = AutoTokenizer.from_pretrained(
                 self.tokenizer_name,
-                trust_remote_code=True,
-                use_fast=False
             )
-            self.model = AutoModelForSequenceClassification.from_pretrained(
+            self.cross_encoder = AutoModelForSequenceClassification.from_pretrained(
                 self.args["cross_encoder_model_name"],
-                trust_remote_code=True
             ).to(self.device)  # Direct device assignment
             
             self.initialized = True
@@ -165,17 +162,8 @@ class PageRetriever:
             # Filter by page
             if self.retrieve_strategy == "page":
                 retrieved_pages = []
-                retrieved_page_nums = set()
                 for document in ranked_passages:
-                    page = document.metadata["page"]
-                    doc_name = os.path.basename(document.metadata["source"]).replace(".pdf", "")
-                    page_key = f"{doc_name}_{page}"
-                    
-                    if page_key in retrieved_page_nums:
-                        continue
-                        
                     retrieved_pages.append(document)
-                    retrieved_page_nums.add(page_key)
                     if len(retrieved_pages) == k:
                         break
             
@@ -226,7 +214,7 @@ class PageRetriever:
                 
                 # Calculate scores
                 with torch.no_grad():
-                    outputs = self.model(**batch_encoding)
+                    outputs = self.cross_encoder(**batch_encoding)
                     logits = outputs.logits.squeeze(-1)
                     scores.extend(logits.cpu().tolist())
             
