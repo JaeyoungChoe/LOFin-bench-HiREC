@@ -103,6 +103,20 @@ class FinRAGSingleQuery:
         self.current_idx += 1
         return query
     
+    async def last_retrieval(self, question: str):
+                self.logger.debug("Starting last retrieval")
+                documents = await self.document_retriever.retrieve_documents(question, k=100)
+                doc_names = [doc["source"] for doc in documents[:5]]
+                page_result = await self.page_retriever.retrieve_pages(
+                    question,
+                    doc_names,
+                    k=self.args.get("pages_per_doc", 20)
+                )
+                pages = page_result['results'][:5]
+
+                return pages
+            
+
     async def process_single_query(self, query: Dict[str, Any]) -> Dict[str, Any]:
         """Process single query"""
         try:
@@ -111,7 +125,7 @@ class FinRAGSingleQuery:
             relevant_pages = []
             self.logger.info(f"qid: {query['qid']}, Original question: {original_question}")
             for iteration in range(self.args.get("max_iteration", 4)):
-               
+                self.logger.info(f"Iteration {iteration}")
                 # 1. Query transformation
                 self.logger.debug("Starting Query transformation")
                 transformed_query = await self.query_transformer.transform_query(question)
@@ -141,10 +155,14 @@ class FinRAGSingleQuery:
                 # If answerable is 'answerable', break the loop
                 if evidence['is_answerable'] == True:
                     break
-                
+
                 question = evidence['refined_query']
-                iteration += 1
-                  
+
+                if iteration == self.args.get("max_iteration", 4) - 1:
+                    pages = await self.last_retrieval(question)
+                    relevant_pages += pages
+                    break
+      
             # Basic retrieval result
             retrieval_result = {
                 "ground_truth": {
@@ -154,7 +172,7 @@ class FinRAGSingleQuery:
                 "query": original_question,
                 "transformed_query": transformed_query,
                 "documents": doc_names,
-                "retrieved_pages": [page["source"] +"_"+ str(page["page"]) for page in evidence["relevant_pages"]],
+                "retrieved_pages": [page["source"] +"_"+ str(page["page"]) for page in relevant_pages],
                 "evidence": evidence
             }
             
@@ -163,7 +181,7 @@ class FinRAGSingleQuery:
                 answer_type = 'pot' if 'numeric' in self.args.get('dataset') else self.args.get("answer_type", "cot")  # cot, pot, direct
                 generated_answer, generation_metadata = self.generator.generate_answer(
                     question=original_question,
-                    retrieved_passages=evidence.get("relevant_pages", []),
+                    retrieved_passages=relevant_pages,
                     answer_type=answer_type
                 )
                     
