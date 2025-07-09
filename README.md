@@ -29,7 +29,7 @@ To minimize the risk of data leakage and ensure fair benchmarking, we release th
 > 🔐 Encryption ensures the integrity of the evaluation protocol and protects against unintended usage.
 
 The entire document collection is shared on the following drive:  
-- [Google drive](https://drive.google.com/drive/u/0/folders/1Z_G6HGPFYzQaKU5fEea5_w3p7rigov_1)  
+- [Google drive](https://drive.google.com/drive/folders/1canlSI9Jp4Iu67EUua55w4QEJ8KxxBg3?usp=sharing)
   - SEC filings are stored as **PDF** files  
   - Refer to `summarization_results.json` for first-page summaries  
   - Use the extracted `.tar` contents as the **path for the VectorDB**
