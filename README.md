@@ -26,12 +26,14 @@ To minimize the risk of data leakage and ensure fair benchmarking, we release th
 - You must **download the encrypted dataset from Google Drive** (link provided separately).
 - The dataset is intended for evaluation only and should not be used for training or data leakage-prone tasks.
 
-> 🔐 Encryption ensures the integrity of the evaluation protocol and protects against unintended usage.
 
-The entire document collection is shared on the following drive:  
+> 🔐 Encryption ensures the integrity of the evaluation protocol and protects against unintended usage.
+> Dataset Update (Final Version - 2025.07.10)
+
+The entire document collection is shared on the following drive:
 - [Google drive](https://drive.google.com/drive/folders/1canlSI9Jp4Iu67EUua55w4QEJ8KxxBg3?usp=sharing)
-  - SEC filings are stored as **PDF** files  
-  - Refer to `summarization_results.json` for first-page summaries  
+  - SEC filings are stored as **PDF** files
+  - Refer to `summarization_results.json` for first-page summaries
   - Use the extracted `.tar` contents as the **path for the VectorDB**
 
 ---
