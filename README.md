@@ -18,21 +18,15 @@ The pipeline consists of:
 
 ---
 
-## 📁 Dataset Access & Security
+## 📁 Dataset Access
 
-To minimize the risk of data leakage and ensure fair benchmarking, we release the test dataset in an **encrypted format**.
+> 📢 **Update (2026.05.21): The full benchmark is now publicly available — no encryption or decryption required.**
+> Previously, the test set was distributed in an encrypted format to mitigate data-leakage risk. As of today, the dataset is fully open and directly accessible on Hugging Face.
 
-- The encrypted benchmark test set can be decrypted easily by following the instructions in the [data/README.md](https://github.com/deep-over/LOFin-bench-HiREC/blob/main/data/README.md) file.
-- You must **download the encrypted dataset from Google Drive** (link provided separately).
-- The dataset is intended for evaluation only and should not be used for training or data leakage-prone tasks.
-
-
-> 🔐 Encryption ensures the integrity of the evaluation protocol and protects against unintended usage.
-> 
-> **Dataset Update (Final Version - 2025.09.03)**
+- 🤗 **Hugging Face**: [HYdsl/Open-domain_Financial_QA](https://huggingface.co/datasets/HYdsl/Open-domain_Financial_QA)
 
 The entire document collection is shared on the following drive:
-- [Google drive](https://drive.google.com/drive/folders/1canlSI9Jp4Iu67EUua55w4QEJ8KxxBg3?usp=sharing)
+- [Google Drive](https://drive.google.com/drive/folders/1canlSI9Jp4Iu67EUua55w4QEJ8KxxBg3?usp=sharing)
   - SEC filings are stored as **PDF** files
   - Refer to `summarization_results.json` for first-page summaries
   - Use the extracted `.tar` contents as the **path for the VectorDB**
@@ -58,12 +52,10 @@ The following arguments can be used in both modes:
 - `--do_generate`: Whether to continue the generation process within the framework.
 - `--continue_iteration`: An option to continue running after a specific number of iterations.
 
-
 ---
 
 ### 1. API Mode (Real-Time Single Query Execution)
 This mode allows for interactive, per-query processing via the `finrag_serving` module.
-
 
 You can run the server using the following command:
 ```bash
