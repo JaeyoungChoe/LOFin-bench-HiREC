@@ -26,7 +26,7 @@ The pipeline consists of:
 - 🤗 **Hugging Face**: [HYdsl/Open-domain_Financial_QA](https://huggingface.co/datasets/HYdsl/Open-domain_Financial_QA)
 
 The entire document collection is shared on the following drive:
-- [Google Drive](https://drive.google.com/drive/folders/1canlSI9Jp4Iu67EUua55w4QEJ8KxxBg3?usp=sharing)
+- [Google Drive](https://drive.google.com/drive/folders/1gBnd-ds6vOjSUNsbZRtBnnFGIwd6etiY?usp=sharing)
   - SEC filings are stored as **PDF** files
   - Refer to `summarization_results.json` for first-page summaries
   - Use the extracted `.tar` contents as the **path for the VectorDB**
